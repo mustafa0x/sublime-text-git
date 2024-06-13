@@ -134,10 +134,18 @@ class GitShow(object):
         item = self.results[picked]
         # the commit hash is the last thing on the first line, in brackets
         ref = item[0].split(' ')[-1].strip('()')
+
+        def use_name_at_ref(result):
+            p = result.strip().split('\n')[-1]
+            self.run_command(
+                ['git', 'show', '%s:%s' % (ref, p)],
+                self.details_done,
+                ref=ref)
+
+        # In case of rename, before running `git show`, we need to get the path at that ref.
         self.run_command(
-            ['git', 'show', '%s:%s' % (ref, self.get_relative_file_path())],
-            self.details_done,
-            ref=ref)
+            ['git', 'log', '--follow', '%s~1..HEAD' % ref, '--name-only', '--oneline',  '--', self.get_relative_file_path()],
+            use_name_at_ref)
 
     def details_done(self, result, ref):
         syntax = self.view.settings().get('syntax')
