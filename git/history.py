@@ -120,7 +120,7 @@ class GitShow(object):
         # GitLog Copy-Past
         self.run_command(
             ['git', 'log', '--no-color', '--pretty=%s (%h)\a%an <%aE>\a%ad (%ar)',
-             '--date=local', '--max-count=9000', '--', self.get_file_name()],
+             '--date=local', '--follow', '--max-count=9000', '--', self.get_file_name()],
             self.show_done)
 
     def show_done(self, result):
