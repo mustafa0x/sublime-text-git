@@ -90,9 +90,17 @@ class GitLog(object):
         # I'm not certain I should have the file name here; it restricts the
         # details to just the current file. Depends on what the user expects...
         # which I'm not sure of.
+        def check_if_output(result):
+            if result:
+                self.details_done(result)
+            else:
+                # If there's no output (file was likely renamed), then show the full commit.
+                self.run_command(
+                    ['git', 'log', '--no-color', '-p', '-1', ref],
+                    self.details_done)
         self.run_command(
             ['git', 'log', '--no-color', '-p', '-1', ref, '--', self.get_file_name()],
-            self.details_done)
+            check_if_output)
 
     def details_done(self, result):
         self.scratch(result, title="Git Commit Details",
